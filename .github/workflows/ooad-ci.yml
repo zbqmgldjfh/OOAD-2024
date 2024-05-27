@@ -3,8 +3,8 @@ name: OOAD CI Config
 on:
   push:
     branches:
-      - develop
       - main
+      - develop
   pull_request:
     types: [opened, synchronize, reopened]
 
