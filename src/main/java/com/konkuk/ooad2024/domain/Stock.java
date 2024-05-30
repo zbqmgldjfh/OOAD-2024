@@ -6,7 +6,7 @@ public class Stock implements Comparable<Stock> {
 
     private static final String INPUT_INVALID_MESSAGE = "유효하지 않은 하루입니다. 다시 입력해 주세요.";
     private static final int INITIAL_COUNT = 0;
-    private static final int MAX_COUNT = 100;
+    private static final int MAX_COUNT = 99;
 
     private final int value;
 

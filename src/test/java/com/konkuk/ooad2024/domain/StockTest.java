@@ -49,7 +49,7 @@ class StockTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { -1, 101 })
+    @ValueSource(ints = { -1, 100 })
     void 재고_생성_실패_테스트(int input) {
         // when, then
         assertThatThrownBy(() -> new Stock(input))
