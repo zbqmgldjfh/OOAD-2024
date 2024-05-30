@@ -13,7 +13,7 @@ class AuthenticationCodeTest {
         // given
         ThrowableAssert.ThrowingCallable actual = () -> AuthenticationCode.createRandomCode();
 
-        // when, then
+        // when, then성
         assertThatCode(actual).doesNotThrowAnyException();
     }
 
