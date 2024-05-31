@@ -1,5 +1,6 @@
 package com.konkuk.ooad2024.domain;
 
+import lombok.Synchronized;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Bank {
         return database.balanceCheck(accountId, amount);
     }
 
+    @Synchronized
     Long requestPayment(Long accountId, Long amount) {
         Long paymentTime = database.decreaseBalanceById(accountId, amount);
         PaymentHistory paymentHistory = new PaymentHistory(accountId, amount, paymentTime);
@@ -32,17 +34,28 @@ public class Bank {
         return paymentHistory.getId();
     }
 
+    @Synchronized
     boolean paymentCancel(Long accountId, Long paymentId) {
         if(isNotYetCreateFirstPayment(accountId)) {
             throw new IllegalArgumentException(NOT_EXIST_PAYMENT);
         }
 
-        PaymentHistory findHistory = histories.get(accountId)
-                .stream().filter(paymentHistory -> paymentHistory.isSameId(paymentId))
+        return paymentCancleByAccountAndPaymentId(accountId, paymentId);
+    }
+
+    private boolean paymentCancleByAccountAndPaymentId(Long accountId, Long paymentId) {
+        PaymentHistory findHistory = findTargetPayment(accountId, paymentId);
+        boolean result = database.increaseBalanceById(accountId, findHistory.getAmount());
+        histories.remove(findHistory.getId());
+        return result;
+    }
+
+    private PaymentHistory findTargetPayment(Long accountId, Long paymentId) {
+        return histories.get(accountId)
+                .stream()
+                .filter(paymentHistory -> paymentHistory.isSameId(paymentId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(NOT_EXIST_PAYMENT));
-
-        return database.increaseBalanceById(accountId, findHistory.getAmount());
     }
 
     private boolean isNotYetCreateFirstPayment(Long accountId) {
