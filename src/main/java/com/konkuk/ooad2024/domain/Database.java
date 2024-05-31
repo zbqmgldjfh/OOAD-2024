@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Database {
 
+    private static final String NOT_EXIST_ACCOUNT = "존재하지 않는 계좌입니다.";
     private final ConcurrentHashMap<Long, Account> db = new ConcurrentHashMap<>();
 
     public void addAccount(Account account) {
@@ -18,19 +19,36 @@ public class Database {
     }
 
     public boolean balanceCheck(long accountId, long money) {
-        if(isNotExsistAccount(accountId)) {
-            throw new IllegalArgumentException("존재하지 않는 계좌입니다.");
+        if(isNotExistAccount(accountId)) {
+            throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
         }
 
         return this.getBalanceById(accountId)
                 .isGreaterThanOrEqual(new Money(money));
     }
 
-    public void decreaseBalanceById(long accountId, long money) {
-        db.get(accountId).decreaseBalance(new Money(money));
+    public boolean increaseBalanceById(Long accountId, Money amount) {
+        if(isNotExistAccount(accountId)) {
+            throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
+        }
+
+        try{
+            db.get(accountId).increaseBalance(amount);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
-    private boolean isNotExsistAccount(long accountId) {
+    public Long decreaseBalanceById(long accountId, long money) {
+        if(isNotExistAccount(accountId)) {
+            throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
+        }
+
+        return db.get(accountId).decreaseBalance(new Money(money));
+    }
+
+    private boolean isNotExistAccount(long accountId) {
         return !db.containsKey(accountId);
     }
 }

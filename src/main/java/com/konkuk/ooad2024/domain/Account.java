@@ -1,8 +1,10 @@
 package com.konkuk.ooad2024.domain;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class Account {
 
-    private static Long idCounter = 0L;
+    private static AtomicLong idCounter = new AtomicLong();
     private final Long id;
     private Money balance;
     private Long lastUpdatedAt;
@@ -14,7 +16,7 @@ public class Account {
     }
 
     public static Account createNewAccount(Long balance) {
-        return new Account(idCounter++, balance);
+        return new Account(idCounter.getAndIncrement(), balance);
     }
 
     public Long getId() {
@@ -27,9 +29,16 @@ public class Account {
         return this.balance;
     }
 
-    public void decreaseBalance(Money money) {
+    public Long increaseBalance(Money amount) {
+        this.balance = this.balance.plus(amount);
         this.updateAccessTime();
+        return this.lastUpdatedAt;
+    }
+
+    public Long decreaseBalance(Money money) {
         this.balance = this.balance.minus(money);
+        this.updateAccessTime();
+        return this.lastUpdatedAt;
     }
 
     private void updateAccessTime() {
