@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Database {
 
     private static final String NOT_EXIST_ACCOUNT = "존재하지 않는 계좌입니다.";
-    private final ConcurrentHashMap<Long, Account> db = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Long, Account> db = new ConcurrentHashMap<>();
 
     public void addAccount(Account account) {
         db.put(account.getId(), account);
