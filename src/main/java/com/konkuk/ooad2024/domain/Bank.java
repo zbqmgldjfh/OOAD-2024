@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Bank {
 
-    private static final ConcurrentHashMap<Long, List<PaymentHistory>> histories = new ConcurrentHashMap<>();
     private static final String NOT_EXIST_PAYMENT = "존재하지 않는 결제입니다.";
-
+    private final ConcurrentHashMap<Long, List<PaymentHistory>> histories = new ConcurrentHashMap<>();
     private final Database database;
+
 
     public Bank(Database database) {
         this.database = database;
@@ -45,7 +45,7 @@ public class Bank {
         return database.increaseBalanceById(accountId, findHistory.getAmount());
     }
 
-    private static boolean isNotYetCreateFirstPayment(Long accountId) {
+    private boolean isNotYetCreateFirstPayment(Long accountId) {
         return histories.get(accountId) == null || histories.get(accountId).isEmpty();
     }
 }
