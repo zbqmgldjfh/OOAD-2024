@@ -26,10 +26,9 @@ public class Bank {
     @Synchronized
     Long requestPayment(Long accountId, Long amount) {
         Long paymentTime = database.decreaseBalanceById(accountId, amount);
-        PaymentHistory paymentHistory = new PaymentHistory(accountId, amount, paymentTime);
 
-        histories.computeIfAbsent(accountId, id -> new ArrayList<>());
-        histories.get(accountId).add(paymentHistory);
+        PaymentHistory paymentHistory = new PaymentHistory(accountId, amount, paymentTime);
+        savePaymentHistory(accountId, paymentHistory);
 
         return paymentHistory.getId();
     }
@@ -43,10 +42,15 @@ public class Bank {
         return paymentCancleByAccountAndPaymentId(accountId, paymentId);
     }
 
+    private void savePaymentHistory(Long accountId, PaymentHistory paymentHistory) {
+        histories.computeIfAbsent(accountId, id -> new ArrayList<>());
+        histories.get(accountId).add(paymentHistory);
+    }
+
     private boolean paymentCancleByAccountAndPaymentId(Long accountId, Long paymentId) {
         PaymentHistory findHistory = findTargetPayment(accountId, paymentId);
         boolean result = database.increaseBalanceById(accountId, findHistory.getAmount());
-        histories.remove(findHistory.getId());
+        histories.get(accountId).remove(findHistory);
         return result;
     }
 

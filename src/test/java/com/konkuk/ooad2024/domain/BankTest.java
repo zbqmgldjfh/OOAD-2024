@@ -1,8 +1,11 @@
 package com.konkuk.ooad2024.domain;
 
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BankTest {
 
@@ -34,5 +37,20 @@ class BankTest {
 
         // then
         Assertions.assertThat(bank.balanceCheck(0L, 10000L)).isTrue();
+    }
+
+    @Test
+    void 동일한_결제_중복_취소_요청시_예외발생_테스트() {
+        // given
+        Long paymentId = bank.requestPayment(0L, 6000l);
+        bank.paymentCancel(0L, paymentId);
+
+        // when
+        ThrowableAssert.ThrowingCallable actual = () -> bank.paymentCancel(0L, paymentId);
+
+        // then
+        assertThatThrownBy(actual)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 결제입니다.");
     }
 }
