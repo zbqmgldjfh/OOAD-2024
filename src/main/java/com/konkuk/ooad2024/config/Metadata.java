@@ -5,12 +5,26 @@ import com.konkuk.ooad2024.domain.BeverageName;
 import com.konkuk.ooad2024.domain.Position;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
 @Configuration
 public class Metadata {
+
+  @Bean
+  public WebSocketStompClient stompClient() {
+    WebSocketClient client = new StandardWebSocketClient();
+
+    WebSocketStompClient stompClient = new WebSocketStompClient(client);
+    stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+    return stompClient;
+  }
 
   @Bean
   public Position myPosition() {
