@@ -1,7 +1,8 @@
-package com.konkuk.ooad2024;
+package com.konkuk.ooad2024.config;
 
 import com.konkuk.ooad2024.domain.Beverage;
 import com.konkuk.ooad2024.domain.BeverageName;
+import com.konkuk.ooad2024.domain.Position;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,10 +10,15 @@ import java.util.AbstractMap;
 import java.util.Map;
 
 @Configuration
-public class Config {
+public class Metadata {
 
   @Bean
-  public Map<BeverageName, Beverage> BeverageMap() {
+  public Position myPosition() {
+    return new Position(4, 5);
+  }
+
+  @Bean
+  public Map<BeverageName, Beverage> myStock() {
     return Map.ofEntries(
         new AbstractMap.SimpleEntry<>(BeverageName.COKE, new Beverage(BeverageName.COKE, 1_000, 0)),
         new AbstractMap.SimpleEntry<>(

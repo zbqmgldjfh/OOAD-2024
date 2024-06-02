@@ -12,8 +12,8 @@ public class Beverages {
   private final Map<BeverageName, Beverage> beverages;
 
   @Autowired
-  public Beverages(Map<BeverageName, Beverage> beverageMap) {
-    this.beverages = beverageMap;
+  public Beverages(Map<BeverageName, Beverage> stockMap) {
+    this.beverages = stockMap;
   }
 
   public boolean checkStock(BeverageName bn, int quantity) {
