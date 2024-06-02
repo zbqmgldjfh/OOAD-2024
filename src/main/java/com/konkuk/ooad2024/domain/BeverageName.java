@@ -4,15 +4,42 @@ import lombok.Getter;
 
 @Getter
 public enum BeverageName {
+  COKE(1),
+  CIDER(2),
+  GREEN_TEA(3),
+  BLACK_TEA(4),
+  MILK_TEA(5),
+  SPARKLING_WATER(6),
+  BARLEY_TEA(7),
+  CAN_COFFEE(8),
+  WATER(9),
+  ENERGY_DRINK(10),
+  YUZA_TEA(11),
+  SWEET_SHAKE(12),
+  ICE_TEA(13),
+  STRAWBERRY_JUICE(14),
+  ORANGE_JUICE(15),
+  GRAPE_JUICE(16),
+  SPORT_DRINK(17),
+  AMERICANO(18),
+  HOT_CHOCOLATE(19),
+  CAFE_LATTE(20);
 
-    COKE(1), CIDER(2), GREEN_TEA(3), BLACK_TEA(4), MILK_TEA(5),
-    SPARKLING_WATER(6), BARLEY_TEA(7), CAN_COFFEE(8), WATER(9), ENERGY_DRINK(10),
-    YUZA_TEA(11), SWEET_SHAKE(12), ICE_TEA(13), STRAWBERRY_JUICE(14), ORANGE_JUICE(15),
-    GRAPE_JUICE(16), SPORT_DRINK(17), AMERICANO(18), HOT_CHOCOLATE(19), CAFE_LATTE(20);
+  private static final String CODE_NOT_FOUND_MESSAGE = "코드와 일치하는 음료가 없습니다.";
 
-    private int code;
+  private final int code;
 
-    BeverageName(int code) {
-        this.code = code;
+  BeverageName(int code) {
+    this.code = code;
+  }
+
+  public static BeverageName from(int code) {
+    for (BeverageName bn : BeverageName.values()) {
+      if (bn.code == code) {
+        return bn;
+      }
     }
+
+    throw new IllegalArgumentException(CODE_NOT_FOUND_MESSAGE);
+  }
 }
