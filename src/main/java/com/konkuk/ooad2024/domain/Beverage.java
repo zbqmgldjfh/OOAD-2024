@@ -1,5 +1,8 @@
 package com.konkuk.ooad2024.domain;
 
+import lombok.Getter;
+
+@Getter
 public class Beverage {
 
     private BeverageName name;
