@@ -2,6 +2,7 @@ package com.konkuk.ooad2024.config;
 
 import com.konkuk.ooad2024.domain.Beverage;
 import com.konkuk.ooad2024.domain.BeverageName;
+import com.konkuk.ooad2024.domain.OtherDVM;
 import com.konkuk.ooad2024.domain.Position;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,9 +33,22 @@ public class Metadata {
   }
 
   @Bean
+  public Map<String, OtherDVM> otherDVMsMap() {
+    return Map.ofEntries(
+        new AbstractMap.SimpleEntry<>("Team2", new OtherDVM(new Position(1, 1))),
+        new AbstractMap.SimpleEntry<>("Team3", new OtherDVM(new Position(2, 1))),
+        new AbstractMap.SimpleEntry<>("Team4", new OtherDVM(new Position(3, 1))),
+        new AbstractMap.SimpleEntry<>("Team5", new OtherDVM(new Position(4, 1))),
+        new AbstractMap.SimpleEntry<>("Team6", new OtherDVM(new Position(5, 1))),
+        new AbstractMap.SimpleEntry<>("Team7", new OtherDVM(new Position(6, 1))),
+        new AbstractMap.SimpleEntry<>("Team8", new OtherDVM(new Position(7, 1))),
+        new AbstractMap.SimpleEntry<>("Team9", new OtherDVM(new Position(8, 1))));
+  }
+
+  @Bean
   public Map<BeverageName, Beverage> myStock() {
     return Map.ofEntries(
-        new AbstractMap.SimpleEntry<>(BeverageName.COKE, new Beverage(BeverageName.COKE, 1_000, 0)),
+        new AbstractMap.SimpleEntry<>(BeverageName.COKE, new Beverage(BeverageName.COKE, 1_000, 5)),
         new AbstractMap.SimpleEntry<>(
             BeverageName.CIDER, new Beverage(BeverageName.CIDER, 1_000, 0)),
         new AbstractMap.SimpleEntry<>(
