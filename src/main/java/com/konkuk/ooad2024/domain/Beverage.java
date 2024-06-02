@@ -22,4 +22,6 @@ public class Beverage {
     public int getStockValue() {
         return this.stock.getValue();
     }
+
+    public int getItemCode(){ return this.name.getCode(); }
 }

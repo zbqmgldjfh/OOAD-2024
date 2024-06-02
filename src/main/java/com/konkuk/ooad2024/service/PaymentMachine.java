@@ -7,13 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @Service
 public class PaymentMachine {
   private final EagerPaymentMachine eagerPaymentMachine; //즉시 결제 Machine
   private final PrePaymentMachine prePaymentMachine;     //선 결제 Machine
 
-  public void prePayment(int position, Beverage beverage){
+  public void prePayment(int position, Beverage beverage) throws IOException {
     prePaymentMachine.prePayment(position, beverage);
   }
 

@@ -6,6 +6,8 @@ import com.konkuk.ooad2024.domain.BeverageName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PrePaymentMachineTest {
@@ -33,4 +35,5 @@ public class PrePaymentMachineTest {
     assertThat(newBeverage.getPrice()).isEqualTo(getBeverage.getPrice());
     assertThat(newBeverage.getStock()).isEqualTo(getBeverage.getStock());
   }
+
 }
