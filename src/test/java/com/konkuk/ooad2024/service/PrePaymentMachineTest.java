@@ -1,12 +1,11 @@
 package com.konkuk.ooad2024.service;
 
 import com.konkuk.ooad2024.domain.AuthenticationCode;
+import com.konkuk.ooad2024.domain.AuthenticationCodeGenerator;
 import com.konkuk.ooad2024.domain.Beverage;
 import com.konkuk.ooad2024.domain.BeverageName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
