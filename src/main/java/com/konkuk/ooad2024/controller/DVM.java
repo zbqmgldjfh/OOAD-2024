@@ -46,14 +46,14 @@ public class DVM {
 
   @PostMapping("eager-payments")
   @ResponseBody
-  public void enterAccount(@RequestBody EagerPaymentRequest request) {
+  public void enterAccount(@RequestBody PaymentRequest request) {
     // TODO: balance check & eager-payment
     // `Bank`와 `PaymentMachine`에 위임 예정
   }
 
   @PostMapping("prepay")
   @ResponseBody
-  public void prepay(@RequestBody PrePaymentRequest request) {
+  public void prepay(@RequestBody PaymentRequest request) {
     // TODO: pre-payments
     // `PaymentMachine`에 위임 예정
   }

@@ -6,9 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Component
 public class AuthenticationCodeGenerator {
-  public AuthenticationCode createAuthenticationCode(){
+  public AuthenticationCode createAuthenticationCode() {
     AuthenticationCode authenticationCode = AuthenticationCode.createRandomCode();
     return authenticationCode;
   }
-
 }

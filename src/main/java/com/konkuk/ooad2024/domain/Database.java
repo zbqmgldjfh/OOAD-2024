@@ -7,48 +7,47 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Database {
 
-    private static final String NOT_EXIST_ACCOUNT = "존재하지 않는 계좌입니다.";
-    private final ConcurrentHashMap<Long, Account> db = new ConcurrentHashMap<>();
+  private static final String NOT_EXIST_ACCOUNT = "존재하지 않는 계좌입니다.";
+  private final ConcurrentHashMap<Long, Account> db = new ConcurrentHashMap<>();
 
-    public void addAccount(Account account) {
-        db.put(account.getId(), account);
+  public void addAccount(Account account) {
+    db.put(account.getId(), account);
+  }
+
+  public Money getBalanceById(long accountId) {
+    return db.get(accountId).getBalance();
+  }
+
+  public boolean balanceCheck(long accountId, long money) {
+    if (isNotExistAccount(accountId)) {
+      throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
     }
 
-    public Money getBalanceById(long accountId) {
-        return db.get(accountId).getBalance();
+    return this.getBalanceById(accountId).isGreaterThanOrEqual(new Money(money));
+  }
+
+  public boolean increaseBalanceById(Long accountId, Money amount) {
+    if (isNotExistAccount(accountId)) {
+      throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
     }
 
-    public boolean balanceCheck(long accountId, long money) {
-        if(isNotExistAccount(accountId)) {
-            throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
-        }
+    try {
+      db.get(accountId).increaseBalance(amount);
+      return true;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
+  }
 
-        return this.getBalanceById(accountId)
-                .isGreaterThanOrEqual(new Money(money));
+  public Long decreaseBalanceById(long accountId, long money) {
+    if (isNotExistAccount(accountId)) {
+      throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
     }
 
-    public boolean increaseBalanceById(Long accountId, Money amount) {
-        if(isNotExistAccount(accountId)) {
-            throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
-        }
+    return db.get(accountId).decreaseBalance(new Money(money));
+  }
 
-        try{
-            db.get(accountId).increaseBalance(amount);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public Long decreaseBalanceById(long accountId, long money) {
-        if(isNotExistAccount(accountId)) {
-            throw new IllegalArgumentException(NOT_EXIST_ACCOUNT);
-        }
-
-        return db.get(accountId).decreaseBalance(new Money(money));
-    }
-
-    private boolean isNotExistAccount(long accountId) {
-        return !db.containsKey(accountId);
-    }
+  private boolean isNotExistAccount(long accountId) {
+    return !db.containsKey(accountId);
+  }
 }

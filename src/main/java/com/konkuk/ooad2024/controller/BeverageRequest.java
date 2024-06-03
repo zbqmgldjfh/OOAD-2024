@@ -1,3 +1,3 @@
 package com.konkuk.ooad2024.controller;
 
-public record BeverageRequest(int beverageId, int quantity) {}
+public record BeverageRequest(String beverageId, int quantity) {}
