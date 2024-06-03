@@ -1,5 +1,8 @@
 package com.konkuk.ooad2024.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum BeverageName {
 
     COKE(1), CIDER(2), GREEN_TEA(3), BLACK_TEA(4), MILK_TEA(5),

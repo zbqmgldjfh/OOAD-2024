@@ -1,5 +1,8 @@
 package com.konkuk.ooad2024.domain;
 
+import lombok.Getter;
+
+@Getter
 public class Beverage {
 
     private BeverageName name;
@@ -19,4 +22,6 @@ public class Beverage {
     public int getStockValue() {
         return this.stock.getValue();
     }
+
+    public int getItemCode(){ return this.name.getCode(); }
 }
