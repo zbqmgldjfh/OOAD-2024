@@ -66,7 +66,7 @@ public class DVM {
   @PostMapping("paiedBeverages")
   @ResponseBody
   public PrePaidBeverageResponse gerPrePaidBeverage(@RequestBody PrePaidBeverageRequest request) {
-    AuthenticationCode authenticationCode = new AuthenticationCode(request.authenticationCode());
+    AuthenticationCode authenticationCode = AuthenticationCode.createRandomCode();
     Beverage beverage = paymentMachine.getPrePaiedBeverage(authenticationCode);
     boolean success = beverage==null ? false : true;
     String beverageId = null;
