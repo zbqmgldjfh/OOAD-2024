@@ -1,9 +1,12 @@
 package com.konkuk.ooad2024.controller;
 
+import com.konkuk.ooad2024.domain.AuthenticationCode;
+import com.konkuk.ooad2024.domain.Beverage;
 import com.konkuk.ooad2024.domain.BeverageName;
 import com.konkuk.ooad2024.domain.Position;
 import com.konkuk.ooad2024.service.Beverages;
 import com.konkuk.ooad2024.service.OtherDVMs;
+import com.konkuk.ooad2024.service.PaymentMachine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -17,12 +20,14 @@ public class DVM {
   private final Beverages beverages;
   private final OtherDVMs otherDVMs;
   private final Position position;
+  private final PaymentMachine paymentMachine;
 
   @Autowired
-  public DVM(Position myPosition, OtherDVMs otherDVMs, Beverages beverages) {
+  public DVM(Position myPosition, OtherDVMs otherDVMs, Beverages beverages, PaymentMachine paymentMachine) {
     this.position = myPosition;
     this.otherDVMs = otherDVMs;
     this.beverages = beverages;
+    this.paymentMachine = paymentMachine;
   }
 
   @PostMapping("beverages")
@@ -60,9 +65,19 @@ public class DVM {
 
   @PostMapping("paiedBeverages")
   @ResponseBody
-  public void gerPrePaidBeverage(@RequestBody PrePaidBeverageRequest request) {
-    // TODO: get pre-paid beverage
-    // `PaymentMachine`에 위임 예정
+  public PrePaidBeverageResponse gerPrePaidBeverage(@RequestBody PrePaidBeverageRequest request) {
+    AuthenticationCode authenticationCode = new AuthenticationCode(request.authenticationCode());
+    Beverage beverage = paymentMachine.getPrePaiedBeverage(authenticationCode);
+    boolean success = beverage==null ? false : true;
+    String beverageId = null;
+    int quantity = 0;
+
+    if (success){
+      beverageId = beverage.getItemCode();
+      quantity = beverage.getStockValue();
+    }
+
+    return new PrePaidBeverageResponse(success, beverageId, quantity);
   }
 
   // XXX: need HELP!

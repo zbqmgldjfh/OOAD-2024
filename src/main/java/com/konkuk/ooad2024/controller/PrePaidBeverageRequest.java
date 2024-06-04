@@ -1,3 +1,3 @@
 package com.konkuk.ooad2024.controller;
 
-public record PrePaidBeverageRequest(int authenticationCode) {}
+public record PrePaidBeverageRequest(String authenticationCode) {}

@@ -13,7 +13,7 @@ public class AuthenticationCode {
 
   private final String value;
 
-  private AuthenticationCode(String value) {
+  public AuthenticationCode(String value) {
     if (isInvalidInput(value)) {
       throw new IllegalArgumentException(INPUT_INVALID_MESSAGE);
     }
