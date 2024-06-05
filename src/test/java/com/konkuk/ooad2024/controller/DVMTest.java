@@ -34,8 +34,6 @@ public class DVMTest {
   private Position position;
   @MockBean
   private Bank bank;
-  @MockBean
-  private Map<BeverageName, Beverage> myStock;
 
   @BeforeEach
   void setUp() {

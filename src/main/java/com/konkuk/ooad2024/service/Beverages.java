@@ -23,4 +23,8 @@ public class Beverages {
   public void reduce(BeverageName bn, int quantity) {
     this.beverages.get(bn).decreaseStock(quantity);
   }
+
+  public long findPriceByName(BeverageName beverageName) {
+    return beverages.get(beverageName).getPrice().getValue();
+  }
 }

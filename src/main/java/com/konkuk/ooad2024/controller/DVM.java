@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
 import java.util.Map;
 
 @Controller(value = "/")
@@ -22,17 +21,15 @@ public class DVM {
   private final Position position;
   private final PaymentMachine paymentMachine;
   private final Bank bank;
-  private final Map<BeverageName, Beverage> myStock;
   private final String IS_NOT_PREPAY_POSSIBLE = "OtherDVM으로부터 선결제 불가능";
   @Autowired
   public DVM(Position myPosition, OtherDVMs otherDVMs, Beverages beverages,
-             PaymentMachine paymentMachine, Bank bank, Map<BeverageName, Beverage> myStock) {
+             PaymentMachine paymentMachine, Bank bank) {
     this.position = myPosition;
     this.otherDVMs = otherDVMs;
     this.beverages = beverages;
     this.paymentMachine = paymentMachine;
     this.bank = bank;
-    this.myStock = myStock;
   }
 
   @PostMapping("beverages")
@@ -68,7 +65,7 @@ public class DVM {
     long accountId = request.accountId();
     int beverageQuantity = request.quantity();
     BeverageName beverageName = BeverageName.from(request.beverageId()); //음료 이름
-    long beveragePrice = myStock.get(beverageName).getPrice().getValue(); //음료 이름으로 가격 구하기
+    long beveragePrice = this.beverages.findPriceByName(beverageName);
     long amount = beverageQuantity * beveragePrice;                     //총 결제할 금액 계산
     boolean haveBalance = bank.balanceCheck(accountId, amount);
 
