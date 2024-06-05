@@ -48,7 +48,7 @@ public class DVMTest {
     String jsonRequest = "{\"authenticationCode\":\"1234567890\"}";
 
     // When
-    when(paymentMachine.getPrePaiedBeverage(any(AuthenticationCode.class))).thenReturn(beverage);
+    when(paymentMachine.getPrePaiedBeverage(any(String.class))).thenReturn(beverage);
 
     // Then
     mockMvc.perform(post("/paiedBeverages")

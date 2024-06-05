@@ -23,7 +23,7 @@ public class PrePaymentMachineTest {
   @Test
   void 인증코드_저장_및_반환_테스트(){
     // Given
-    AuthenticationCode newCode = authenticationCodeGenerator.createAuthenticationCode();
+    String newCode = authenticationCodeGenerator.createAuthenticationCode().getValue();
     Beverage newBeverage = new Beverage(BeverageName.COKE, 1, 1);
 
     // When

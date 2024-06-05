@@ -1,11 +1,13 @@
 package com.konkuk.ooad2024.domain;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Getter
+@Setter
 public class AuthenticationCode {
 
   private static final String INPUT_INVALID_MESSAGE = "유효하지 않은 코드길이 입니다.";
