@@ -23,7 +23,7 @@ public class Bank {
   }
 
   @Synchronized
-  Long requestPayment(Long accountId, Long amount) {
+  public Long requestPayment(Long accountId, Long amount) {
     Long paymentTime = database.decreaseBalanceById(accountId, amount);
 
     PaymentHistory paymentHistory = new PaymentHistory(accountId, amount, paymentTime);

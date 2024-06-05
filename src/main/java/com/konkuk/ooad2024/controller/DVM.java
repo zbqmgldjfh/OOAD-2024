@@ -82,7 +82,8 @@ public class DVM {
       boolean isPrepayPossible = prePaymentResponseDto.isPrepayPossible();
       String authenticationCode = prePaymentResponseDto.getAuthenticationCode();
       if (isPrepayPossible) {
-        // TODO : 결제 진행
+        //계좌에 잔액도 있고 Other DVM에서 선결제 여부도 true이면 결제 진행
+        bank.requestPayment(accountId, amount);
       } else {
         throw new Exception(IS_NOT_PREPAY_POSSIBLE);
       }
