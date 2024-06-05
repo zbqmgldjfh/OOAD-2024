@@ -1,6 +1,7 @@
 package com.konkuk.ooad2024.domain;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;

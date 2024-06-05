@@ -21,14 +21,22 @@ public class Metadata {
   @Bean
   public Map<String, OtherDVM> otherDVMsMap() {
     return Map.ofEntries(
-        new AbstractMap.SimpleEntry<>("Team2", new OtherDVM(new Position(1, 1))),
-        new AbstractMap.SimpleEntry<>("Team3", new OtherDVM(new Position(2, 1))),
-        new AbstractMap.SimpleEntry<>("Team4", new OtherDVM(new Position(3, 1))),
-        new AbstractMap.SimpleEntry<>("Team5", new OtherDVM(new Position(4, 1))),
-        new AbstractMap.SimpleEntry<>("Team6", new OtherDVM(new Position(5, 1))),
-        new AbstractMap.SimpleEntry<>("Team7", new OtherDVM(new Position(6, 1))),
-        new AbstractMap.SimpleEntry<>("Team8", new OtherDVM(new Position(7, 1))),
-        new AbstractMap.SimpleEntry<>("Team9", new OtherDVM(new Position(8, 1))));
+        new AbstractMap.SimpleEntry<>(
+            "Team2", new OtherDVM(new Position(1, 1), "127.0.0.2", 8080, "Team2")),
+        new AbstractMap.SimpleEntry<>(
+            "Team3", new OtherDVM(new Position(2, 1), "127.0.0.3", 8080, "Team3")),
+        new AbstractMap.SimpleEntry<>(
+            "Team4", new OtherDVM(new Position(3, 1), "127.0.0.4", 8080, "Team4")),
+        new AbstractMap.SimpleEntry<>(
+            "Team5", new OtherDVM(new Position(4, 1), "127.0.0.5", 8080, "Team5")),
+        new AbstractMap.SimpleEntry<>(
+            "Team6", new OtherDVM(new Position(5, 1), "127.0.0.6", 8080, "Team6")),
+        new AbstractMap.SimpleEntry<>(
+            "Team7", new OtherDVM(new Position(6, 1), "127.0.0.7", 8080, "Team7")),
+        new AbstractMap.SimpleEntry<>(
+            "Team8", new OtherDVM(new Position(7, 1), "127.0.0.8", 8080, "Team8")),
+        new AbstractMap.SimpleEntry<>(
+            "Team9", new OtherDVM(new Position(8, 1), "127.0.0.9", 8080, "Team9")));
   }
 
   @Bean

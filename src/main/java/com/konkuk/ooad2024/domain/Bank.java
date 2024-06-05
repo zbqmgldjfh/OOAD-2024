@@ -18,12 +18,12 @@ public class Bank {
     this.database = database;
   }
 
-  boolean balanceCheck(Long accountId, Long amount) {
+  public boolean balanceCheck(Long accountId, Long amount) {
     return database.balanceCheck(accountId, amount);
   }
 
   @Synchronized
-  Long requestPayment(Long accountId, Long amount) {
+  public Long requestPayment(Long accountId, Long amount) {
     Long paymentTime = database.decreaseBalanceById(accountId, amount);
 
     PaymentHistory paymentHistory = new PaymentHistory(accountId, amount, paymentTime);

@@ -1,9 +1,10 @@
 package com.konkuk.ooad2024.controller;
 
-import com.konkuk.ooad2024.domain.BeverageName;
-import com.konkuk.ooad2024.domain.Position;
+import com.konkuk.ooad2024.domain.*;
+import com.konkuk.ooad2024.dto.PrePaymentResponseDto;
 import com.konkuk.ooad2024.service.Beverages;
 import com.konkuk.ooad2024.service.OtherDVMs;
+import com.konkuk.ooad2024.service.PaymentMachine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -17,12 +18,22 @@ public class DVM {
   private final Beverages beverages;
   private final OtherDVMs otherDVMs;
   private final Position position;
+  private final PaymentMachine paymentMachine;
+  private final Bank bank;
+  private final String IS_NOT_PREPAY_POSSIBLE = "OtherDVM으로부터 선결제 불가능";
 
   @Autowired
-  public DVM(Position myPosition, OtherDVMs otherDVMs, Beverages beverages) {
+  public DVM(
+      Position myPosition,
+      OtherDVMs otherDVMs,
+      Beverages beverages,
+      PaymentMachine paymentMachine,
+      Bank bank) {
     this.position = myPosition;
     this.otherDVMs = otherDVMs;
     this.beverages = beverages;
+    this.paymentMachine = paymentMachine;
+    this.bank = bank;
   }
 
   @PostMapping("beverages")
@@ -53,16 +64,51 @@ public class DVM {
 
   @PostMapping("prepay")
   @ResponseBody
-  public void prepay(@RequestBody PaymentRequest request) {
-    // TODO: pre-payments
-    // `PaymentMachine`에 위임 예정
+  public PaymentResponse prepay(@RequestBody PaymentRequest request) throws Exception {
+    // accountId를 통해 계좌 잔액이 충분한지 확인
+    long accountId = request.accountId();
+    int beverageQuantity = request.quantity();
+    BeverageName beverageName = BeverageName.from(request.beverageId()); // 음료 이름
+    long beveragePrice = this.beverages.findPriceByName(beverageName);
+    long amount = beverageQuantity * beveragePrice; // 총 결제할 금액 계산
+    boolean haveBalance = bank.balanceCheck(accountId, amount);
+
+    // 계좌 잔액이 충분하다면 PaymentMachine에게 선결제 요청 #1 (boolean return)
+    if (haveBalance) {
+      Position targetPosition =
+          this.otherDVMs.findByPosition(new Position(request.x(), request.y())).getPosition();
+      Beverage beverageDTO = new Beverage(beverageName, (int) beveragePrice, beverageQuantity);
+      PrePaymentResponseDto prePaymentResponseDto = paymentMachine.prePayment(targetPosition, beverageDTO);
+      boolean isPrepayPossible = prePaymentResponseDto.isPrepayPossible();
+      String authenticationCode = prePaymentResponseDto.getAuthenticationCode();
+      if (isPrepayPossible) {
+        //계좌에 잔액도 있고 Other DVM에서 선결제 여부도 true이면 결제 진행
+        bank.requestPayment(accountId, amount);
+      } else {
+        throw new Exception(IS_NOT_PREPAY_POSSIBLE);
+      }
+      return new PaymentResponse(
+          isPrepayPossible, authenticationCode);
+    } else {
+      return new PaymentResponse(false, null);
+    }
   }
 
   @PostMapping("paiedBeverages")
   @ResponseBody
-  public void gerPrePaidBeverage(@RequestBody PrePaidBeverageRequest request) {
-    // TODO: get pre-paid beverage
-    // `PaymentMachine`에 위임 예정
+  public PrePaidBeverageResponse gerPrePaidBeverage(@RequestBody PrePaidBeverageRequest request) {
+    String authenticationCode = request.authenticationCode();
+    Beverage beverage = paymentMachine.getPrePaiedBeverage(authenticationCode);
+    boolean success = beverage == null ? false : true;
+    String beverageId = null;
+    int quantity = 0;
+
+    if (success) {
+      beverageId = beverage.getItemCode();
+      quantity = beverage.getStockValue();
+    }
+
+    return new PrePaidBeverageResponse(success, beverageId, quantity);
   }
 
   // XXX: need HELP!

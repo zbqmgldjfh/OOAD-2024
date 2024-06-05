@@ -1,8 +1,11 @@
 package com.konkuk.ooad2024.domain;
 
+import lombok.Getter;
+
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+@Getter
 public class Money implements Comparable<Money> {
 
   private static final String INVALID_OPERATION_MESSAGE = "작은금액에서 큰 금액을 뺼 수 없습니다.";

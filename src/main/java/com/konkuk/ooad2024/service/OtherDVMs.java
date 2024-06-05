@@ -5,7 +5,6 @@ import com.konkuk.ooad2024.domain.OtherDVM;
 import com.konkuk.ooad2024.domain.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.util.Map;
 
@@ -33,5 +32,15 @@ public class OtherDVMs {
             })
         .toList()
         .get(0);
+  }
+
+  public OtherDVM findByPosition(Position position) {
+    return this.otherDVMs.values().stream()
+        .filter(
+            (dvm) ->
+                dvm.getPosition().getXaxis() == position.getXaxis()
+                    && dvm.getPosition().getYaxis() == position.getYaxis())
+        .findFirst()
+        .orElse(null);
   }
 }
