@@ -11,17 +11,17 @@ import java.util.*;
 @Service
 public class PrePaymentMachine {
   private final AuthenticationCodeGenerator authenticationCodeGenerator;
-  private final OtherDVM otherDVM; //
-  private final Map<String , Beverage> codeToBeverageMap = new HashMap<>();
+  private final OtherDVMs otherDVMs; //
+  private final Map<String, Beverage> codeToBeverageMap = new HashMap<>();
   private static final String INVALID_AUTH_CODE_MESSAGE = "유효하지 않은 인증 코드입니다.";
 
-  public boolean prePayment(Position position, Beverage beverage)throws IOException {
+  public boolean prePayment(Position position, Beverage beverage) throws IOException {
     // 새 인증코드 생성
     AuthenticationCode newCode = authenticationCodeGenerator.createAuthenticationCode();
 
     // #2 소켓 통신은 otherDVM에서진행, otherDVM에서는 다른 DVM이 선결제가 가능한지 확인 !
     // 이 결과가 DVM까지 연결되어 Return !!
-    return otherDVM.prepay(beverage, newCode, position);
+    return otherDVMs.findByPosition(position).prepay(beverage, newCode, position);
   }
 
   public void storeBeverage(String authenticationCode, Beverage beverage) {

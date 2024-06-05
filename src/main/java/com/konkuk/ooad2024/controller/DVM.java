@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Map;
-
 @Controller(value = "/")
 public class DVM {
   private final Beverages beverages;
@@ -22,9 +20,14 @@ public class DVM {
   private final PaymentMachine paymentMachine;
   private final Bank bank;
   private final String IS_NOT_PREPAY_POSSIBLE = "OtherDVM으로부터 선결제 불가능";
+
   @Autowired
-  public DVM(Position myPosition, OtherDVMs otherDVMs, Beverages beverages,
-             PaymentMachine paymentMachine, Bank bank) {
+  public DVM(
+      Position myPosition,
+      OtherDVMs otherDVMs,
+      Beverages beverages,
+      PaymentMachine paymentMachine,
+      Bank bank) {
     this.position = myPosition;
     this.otherDVMs = otherDVMs;
     this.beverages = beverages;
@@ -61,26 +64,28 @@ public class DVM {
   @PostMapping("prepay")
   @ResponseBody
   public PaymentResponse prepay(@RequestBody PaymentRequest request) throws Exception {
-    //accountId를 통해 계좌 잔액이 충분한지 확인
+    // accountId를 통해 계좌 잔액이 충분한지 확인
     long accountId = request.accountId();
     int beverageQuantity = request.quantity();
-    BeverageName beverageName = BeverageName.from(request.beverageId()); //음료 이름
+    BeverageName beverageName = BeverageName.from(request.beverageId()); // 음료 이름
     long beveragePrice = this.beverages.findPriceByName(beverageName);
-    long amount = beverageQuantity * beveragePrice;                     //총 결제할 금액 계산
+    long amount = beverageQuantity * beveragePrice; // 총 결제할 금액 계산
     boolean haveBalance = bank.balanceCheck(accountId, amount);
 
-    //계좌 잔액이 충분하다면 PaymentMachine에게 선결제 요청 #1 (boolean return)
-    if(haveBalance){
-      Position targetPosition = new Position(request.x(), request.y());
-      Beverage beverageDTO = new Beverage(beverageName, (int)beveragePrice, beverageQuantity);
-      boolean isPrepayPossible =  paymentMachine.prePayment(targetPosition, beverageDTO);
-      if(isPrepayPossible){
-        //TODO : 결제 진행
-      }else {
+    // 계좌 잔액이 충분하다면 PaymentMachine에게 선결제 요청 #1 (boolean return)
+    if (haveBalance) {
+      Position targetPosition =
+          this.otherDVMs.findByPosition(new Position(request.x(), request.y())).getPosition();
+      Beverage beverageDTO = new Beverage(beverageName, (int) beveragePrice, beverageQuantity);
+      boolean isPrepayPossible = paymentMachine.prePayment(targetPosition, beverageDTO);
+      if (isPrepayPossible) {
+        // TODO : 결제 진행
+      } else {
         throw new Exception(IS_NOT_PREPAY_POSSIBLE);
       }
-      return new PaymentResponse(isPrepayPossible, targetPosition.getXaxis(), targetPosition.getYaxis());
-    }else{
+      return new PaymentResponse(
+          isPrepayPossible, targetPosition.getXaxis(), targetPosition.getYaxis());
+    } else {
       return new PaymentResponse(false, 0, 0);
     }
   }
@@ -90,11 +95,11 @@ public class DVM {
   public PrePaidBeverageResponse gerPrePaidBeverage(@RequestBody PrePaidBeverageRequest request) {
     String authenticationCode = request.authenticationCode();
     Beverage beverage = paymentMachine.getPrePaiedBeverage(authenticationCode);
-    boolean success = beverage==null ? false : true;
+    boolean success = beverage == null ? false : true;
     String beverageId = null;
     int quantity = 0;
 
-    if (success){
+    if (success) {
       beverageId = beverage.getItemCode();
       quantity = beverage.getStockValue();
     }
