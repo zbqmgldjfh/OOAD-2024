@@ -1,9 +1,6 @@
 package com.konkuk.ooad2024.controller;
 
-import com.konkuk.ooad2024.domain.AuthenticationCode;
-import com.konkuk.ooad2024.domain.Beverage;
-import com.konkuk.ooad2024.domain.BeverageName;
-import com.konkuk.ooad2024.domain.Position;
+import com.konkuk.ooad2024.domain.*;
 import com.konkuk.ooad2024.service.Beverages;
 import com.konkuk.ooad2024.service.OtherDVMs;
 import com.konkuk.ooad2024.service.PaymentMachine;
@@ -14,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -33,6 +32,10 @@ public class DVMTest {
   private PaymentMachine paymentMachine;
   @MockBean
   private Position position;
+  @MockBean
+  private Bank bank;
+  @MockBean
+  private Map<BeverageName, Beverage> myStock;
 
   @BeforeEach
   void setUp() {

@@ -18,7 +18,7 @@ public class Bank {
     this.database = database;
   }
 
-  boolean balanceCheck(Long accountId, Long amount) {
+  public boolean balanceCheck(Long accountId, Long amount) {
     return database.balanceCheck(accountId, amount);
   }
 

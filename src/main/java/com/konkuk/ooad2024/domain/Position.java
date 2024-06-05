@@ -1,5 +1,8 @@
 package com.konkuk.ooad2024.domain;
 
+import lombok.Getter;
+
+@Getter
 public class Position {
   private static final int AXIS_RANGE_LOWER = 0;
   private static final int AXIS_RANGE_UPPER = 100;

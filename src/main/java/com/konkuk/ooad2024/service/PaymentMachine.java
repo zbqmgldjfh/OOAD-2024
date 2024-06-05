@@ -2,6 +2,8 @@ package com.konkuk.ooad2024.service;
 
 import com.konkuk.ooad2024.domain.AuthenticationCode;
 import com.konkuk.ooad2024.domain.Beverage;
+import com.konkuk.ooad2024.domain.BeverageName;
+import com.konkuk.ooad2024.domain.Position;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,9 @@ public class PaymentMachine {
   private final EagerPaymentMachine eagerPaymentMachine; // 즉시 결제 Machine
   private final PrePaymentMachine prePaymentMachine; // 선 결제 Machine
 
-  public void prePayment(int position, Beverage beverage) throws IOException {
-    prePaymentMachine.prePayment(position, beverage);
+  public boolean prePayment(Position position, Beverage beverage) throws IOException {
+    // #2
+    return prePaymentMachine.prePayment(position, beverage);
   }
 
   public void storeBeverage(AuthenticationCode authenticationCode, Beverage beverage) {
