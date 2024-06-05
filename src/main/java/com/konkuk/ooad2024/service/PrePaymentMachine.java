@@ -12,7 +12,7 @@ import java.util.*;
 @Service
 public class PrePaymentMachine {
   private final AuthenticationCodeGenerator authenticationCodeGenerator;
-  private final OtherDVMs otherDVMs; //
+  private final OtherDVMs otherDVMs;
   private final Map<String, Beverage> codeToBeverageMap = new HashMap<>();
   private static final String INVALID_AUTH_CODE_MESSAGE = "유효하지 않은 인증 코드입니다.";
 

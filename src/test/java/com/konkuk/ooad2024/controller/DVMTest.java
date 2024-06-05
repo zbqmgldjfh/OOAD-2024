@@ -13,7 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -32,9 +31,24 @@ public class DVMTest {
   @MockBean
   private PaymentMachine paymentMachine;
   @MockBean
-  private Position position;
+  Position position;
   @MockBean
   private Bank bank;
+
+  private long accountId;
+  private BeverageName beverageName;
+  private int quantity;
+  private long price;
+  private long totalAmount;
+
+  @BeforeEach
+  void setUp() {
+    accountId = 1L;
+    beverageName = BeverageName.COKE;
+    quantity = 2;
+    price = 500;
+    totalAmount = quantity * price;
+  }
 
   @Test
   void 컨트롤러_인증코드_음료수_반환_테스트() throws Exception{
@@ -58,12 +72,6 @@ public class DVMTest {
   @Test
   void 컨트롤러_선결제_성공_테스트() throws Exception {
     // Given
-    long accountId = 1L;
-    BeverageName beverageName = BeverageName.COKE;
-    int quantity = 2;
-    long price = 500;
-    long totalAmount = quantity * price;
-    Position position = new Position(10, 20);
     PrePaymentResponseDto responseDto = new PrePaymentResponseDto(true, "abcdefghij");
 
     String jsonRequest = String.format("{\"accountId\": %d, \"beverageId\": \"%s\", \"quantity\": %d, \"x\": %d, \"y\": %d}",
@@ -87,13 +95,6 @@ public class DVMTest {
   @Test
   void 컨트롤러_선결제_잔액부족_테스트() throws Exception {
     // Given
-    long accountId = 1L;
-    BeverageName beverageName = BeverageName.COKE;
-    int quantity = 2;
-    long price = 500;
-    long totalAmount = quantity * price;
-    Position position = new Position(10, 20);
-
     String jsonRequest = String.format("{\"accountId\": %d, \"beverageId\": \"%s\", \"quantity\": %d, \"x\": %d, \"y\": %d}",
             accountId, beverageName.getCode(), quantity, position.getXaxis(), position.getYaxis());
 
