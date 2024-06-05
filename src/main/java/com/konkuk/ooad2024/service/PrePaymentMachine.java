@@ -1,6 +1,7 @@
 package com.konkuk.ooad2024.service;
 
 import com.konkuk.ooad2024.domain.*;
+import com.konkuk.ooad2024.dto.PrePaymentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +16,16 @@ public class PrePaymentMachine {
   private final Map<String, Beverage> codeToBeverageMap = new HashMap<>();
   private static final String INVALID_AUTH_CODE_MESSAGE = "유효하지 않은 인증 코드입니다.";
 
-  public boolean prePayment(Position position, Beverage beverage) throws IOException {
+  public PrePaymentResponseDto prePayment(Position position, Beverage beverage) throws IOException {
     // 새 인증코드 생성
     AuthenticationCode newCode = authenticationCodeGenerator.createAuthenticationCode();
 
     // #2 소켓 통신은 otherDVM에서진행, otherDVM에서는 다른 DVM이 선결제가 가능한지 확인 !
     // 이 결과가 DVM까지 연결되어 Return !!
-    return otherDVMs.findByPosition(position).prepay(beverage, newCode, position);
+    boolean isPrepayPossible =  otherDVMs.findByPosition(position).prepay(beverage, newCode, position);
+
+    PrePaymentResponseDto prePaymentResponseDto = new PrePaymentResponseDto(isPrepayPossible, newCode.getValue());
+    return prePaymentResponseDto;
   }
 
   public void storeBeverage(String authenticationCode, Beverage beverage) {

@@ -63,8 +63,6 @@ public class OtherDVM {
       // 메시지 받기
       String responseLine;
       if ((responseLine = reader.readLine()) != null) {
-        System.out.println("Received from server: " + responseLine);
-        // JSON 파싱
         Map<String, Object> responseMap = mapper.readValue(responseLine, Map.class);
         Map<String, Object> msgContent = (Map<String, Object>) responseMap.get("msg_content");
         String availability = (String) msgContent.get("availability");

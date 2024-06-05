@@ -1,6 +1,7 @@
 package com.konkuk.ooad2024.controller;
 
 import com.konkuk.ooad2024.domain.*;
+import com.konkuk.ooad2024.dto.PrePaymentResponseDto;
 import com.konkuk.ooad2024.service.Beverages;
 import com.konkuk.ooad2024.service.OtherDVMs;
 import com.konkuk.ooad2024.service.PaymentMachine;
@@ -77,14 +78,16 @@ public class DVM {
       Position targetPosition =
           this.otherDVMs.findByPosition(new Position(request.x(), request.y())).getPosition();
       Beverage beverageDTO = new Beverage(beverageName, (int) beveragePrice, beverageQuantity);
-      boolean isPrepayPossible = paymentMachine.prePayment(targetPosition, beverageDTO);
+      PrePaymentResponseDto prePaymentResponseDto = paymentMachine.prePayment(targetPosition, beverageDTO);
+      boolean isPrepayPossible = prePaymentResponseDto.isPrepayPossible();
+      String authenticationCode = prePaymentResponseDto.getAuthenticationCode();
       if (isPrepayPossible) {
         // TODO : 결제 진행
       } else {
         throw new Exception(IS_NOT_PREPAY_POSSIBLE);
       }
       return new PaymentResponse(
-          isPrepayPossible, null);
+          isPrepayPossible, authenticationCode);
     } else {
       return new PaymentResponse(false, null);
     }
