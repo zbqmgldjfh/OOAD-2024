@@ -93,7 +93,7 @@ public class DVMTest {
   }
 
   @Test
-  void 컨트롤러_선결제_잔액부족_테스트() throws Exception {
+  void 컨트롤러_선결제_실패_테스트() throws Exception {
     // Given
     String jsonRequest = String.format("{\"accountId\": %d, \"beverageId\": \"%s\", \"quantity\": %d, \"x\": %d, \"y\": %d}",
             accountId, beverageName.getCode(), quantity, position.getXaxis(), position.getYaxis());
@@ -110,6 +110,45 @@ public class DVMTest {
             .andExpect(jsonPath("$.haveBalance").value(false))
             .andExpect(jsonPath("$.authenticationCode").doesNotExist());
   }
+
+  @Test
+  void 컨트롤러_즉시결제_성공_테스트() throws Exception {
+    // Given
+    String jsonRequest = String.format("{\"accountId\": %d, \"beverageId\": \"%s\", \"quantity\": %d, \"x\": %d, \"y\": %d}",
+            accountId, beverageName.getCode(), quantity, null, null);
+
+    // When
+    when(beverages.findPriceByName(beverageName)).thenReturn(price);
+    when(bank.balanceCheck(accountId, totalAmount)).thenReturn(true);
+
+    // Then
+    mockMvc.perform(post("/eager-payments")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonRequest))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.haveBalance").value(true))
+            .andExpect(jsonPath("$.authenticationCode").doesNotExist());
+  }
+
+  @Test
+  void 컨트롤러_즉시결제_실패_테스트() throws Exception {
+    // Given
+    String jsonRequest = String.format("{\"accountId\": %d, \"beverageId\": \"%s\", \"quantity\": %d, \"x\": %d, \"y\": %d}",
+            accountId, beverageName.getCode(), quantity, null, null);
+
+    // When
+    when(beverages.findPriceByName(beverageName)).thenReturn(price);
+    when(bank.balanceCheck(accountId, totalAmount)).thenReturn(false);
+
+    // Then
+    mockMvc.perform(post("/eager-payments")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonRequest))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.haveBalance").value(false))
+            .andExpect(jsonPath("$.authenticationCode").doesNotExist());
+  }
+
 
 
 }
