@@ -84,9 +84,9 @@ public class DVM {
         throw new Exception(IS_NOT_PREPAY_POSSIBLE);
       }
       return new PaymentResponse(
-          isPrepayPossible, targetPosition.getXaxis(), targetPosition.getYaxis());
+          isPrepayPossible, null);
     } else {
-      return new PaymentResponse(false, 0, 0);
+      return new PaymentResponse(false, null);
     }
   }
 
