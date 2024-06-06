@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
@@ -224,6 +225,7 @@ public class DVM implements Runnable {
             writer.newLine();
             writer.flush();
           }
+        } catch (IOException ignored) {
         }
       }
     } catch (Exception e) {
