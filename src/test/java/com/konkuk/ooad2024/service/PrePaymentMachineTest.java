@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,6 +30,7 @@ public class PrePaymentMachineTest {
     anotherCodeGenerator = new AuthenticationCodeGenerator();
     prePaymentMachine = new PrePaymentMachine(authenticationCodeGenerator, otherDVMs);
   }
+
   @Test
   void PrePaymentMachine_선결제_테스트() throws IOException {
     // Given
@@ -39,11 +38,10 @@ public class PrePaymentMachineTest {
     Beverage beverage = new Beverage(BeverageName.COKE, 500, 10);
     AuthenticationCode authCode = anotherCodeGenerator.createAuthenticationCode();
 
+    // When
     when(authenticationCodeGenerator.createAuthenticationCode()).thenReturn(authCode);
     when(otherDVMs.findByPosition(any(Position.class))).thenReturn(otherDVM);
     when(otherDVM.prepay(any(Beverage.class), any(AuthenticationCode.class), any(Position.class))).thenReturn(true);
-
-    // When
     PrePaymentResponseDto result = prePaymentMachine.prePayment(position, beverage);
 
     // Then
