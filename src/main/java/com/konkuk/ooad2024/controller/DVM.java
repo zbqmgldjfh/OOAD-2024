@@ -1,20 +1,25 @@
 package com.konkuk.ooad2024.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.konkuk.ooad2024.domain.*;
 import com.konkuk.ooad2024.dto.PrePaymentResponseDto;
 import com.konkuk.ooad2024.service.Beverages;
 import com.konkuk.ooad2024.service.OtherDVMs;
 import com.konkuk.ooad2024.service.PaymentMachine;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import java.io.IOException;
 
 @Controller(value = "/")
-public class DVM {
+public class DVM extends TextWebSocketHandler {
   private final Beverages beverages;
   private final OtherDVMs otherDVMs;
   private final Position position;
@@ -124,10 +129,38 @@ public class DVM {
     return new PrePaidBeverageResponse(success, beverageId, quantity);
   }
 
-  // XXX: need HELP!
-  @MessageMapping("/")
-  @SendTo("/topic")
-  public boolean checkStock(@RequestBody BeverageRequest request) {
-    return this.beverages.checkStock(BeverageName.from(request.beverageId()), request.quantity());
+  @Override
+  public void handleTextMessage(@NonNull WebSocketSession session, TextMessage message) {
+    ObjectMapper mapper = new ObjectMapper();
+
+    System.out.println("Received message: " + message.getPayload());
+
+    try {
+      StockCheckRequest request = mapper.readValue(message.getPayload(), StockCheckRequest.class);
+      String msg_type = request.msg_type();
+      String src_id = request.src_id();
+      String dst_id = request.dst_id();
+      StockCheckRequestContent msg_content = request.msg_content();
+
+      if (!msg_type.equals("req_stock") || !dst_id.equals("Team1")) {
+        return;
+      }
+
+      StockCheckResponseContent responseContent =
+          new StockCheckResponseContent(
+              msg_content.item_code(),
+              (this.beverages.checkStock(
+                      BeverageName.from(msg_content.item_code()), msg_content.item_num()))
+                  ? msg_content.item_num()
+                  : 0,
+              this.position.getXaxis(),
+              this.position.getYaxis());
+
+      StockCheckResponse response =
+          new StockCheckResponse("resp_stock", dst_id, src_id, responseContent);
+      session.sendMessage(new TextMessage(mapper.writeValueAsString(response)));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
