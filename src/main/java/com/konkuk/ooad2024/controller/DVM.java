@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class DVM implements Runnable {
@@ -157,75 +159,76 @@ public class DVM implements Runnable {
             BufferedWriter writer =
                 new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
           try {
-            StockCheckRequest request = mapper.readValue(reader, StockCheckRequest.class);
-            String msg_type = request.msg_type();
-            String src_id = request.src_id();
-            String dst_id = request.dst_id();
+            String requestLine = reader.readLine();
+            if (requestLine == null) continue;
 
-            if ((!dst_id.equals("Team1") && !dst_id.equals("0")) || !msg_type.equals("req_stock")) {
+            Map<String, Object> requestMap = mapper.readValue(requestLine, Map.class);
+            Map<String, Object> msgContent = (Map<String, Object>) requestMap.get("msg_content");
+            String msg_type = (String) requestMap.get("msg_type");
+            String src_id = (String) requestMap.get("src_id");
+            //            String dst_id = (String) requestMap.get("dst_id");
+
+            //            if ((!dst_id.equals("Team1") && !dst_id.equals("0"))) {
+            //              continue;
+            //            }
+
+            System.out.println("[SERVER] Received: " + requestMap);
+
+            Map<String, Object> response = new HashMap<>();
+            if (msg_type.equals("req_stock")) {
+              String item_code = (String) msgContent.get("item_code");
+              int item_num = (int) msgContent.get("item_num");
+
+              boolean haveStock = this.beverages.checkStock(BeverageName.from(item_code), item_num);
+
+              response.put("msg_type", "resp_stock");
+              response.put("src_id", "Team1");
+              response.put("dst_id", src_id);
+              response.put(
+                  "msg_content",
+                  Map.of(
+                      "item_code",
+                      item_code,
+                      "item_num",
+                      (haveStock) ? item_num : 0,
+                      "x",
+                      this.position.getXaxis(),
+                      "y",
+                      this.position.getYaxis()));
+            } else if (msg_type.equals("req_prepay")) {
+              String item_code = (String) msgContent.get("item_code");
+              int item_num = (int) msgContent.get("item_num");
+              String cert_code = (String) msgContent.get("cert_code");
+
+              BeverageName trgBeverage = BeverageName.from(item_code);
+              boolean haveStock = this.beverages.checkStock(trgBeverage, item_num);
+              if (haveStock) {
+                this.beverages.reduce(trgBeverage, item_num);
+                this.paymentMachine.storeBeverage(
+                    cert_code, new Beverage(trgBeverage, 0, item_num));
+              }
+
+              response.put("msg_type", "resp_prepay");
+              response.put("src_id", "Team1");
+              response.put("dst_id", src_id);
+              response.put(
+                  "msg_content",
+                  Map.of(
+                      "item_code",
+                      item_code,
+                      "item_num",
+                      item_num,
+                      "availability",
+                      (haveStock) ? "T" : "F"));
+            } else {
               continue;
             }
-
-            StockCheckRequestContent msg_content =
-                mapper.readValue(reader, StockCheckRequest.class).msg_content();
-
-            System.out.println("[SERVER] Received: " + request);
-
-            boolean haveStock =
-                this.beverages.checkStock(
-                    BeverageName.from(msg_content.item_code()), msg_content.item_num());
-
-            StockCheckResponseContent responseContent =
-                new StockCheckResponseContent(
-                    msg_content.item_code(),
-                    (haveStock) ? msg_content.item_num() : 0,
-                    this.position.getXaxis(),
-                    this.position.getYaxis());
-
-            StockCheckResponse response =
-                new StockCheckResponse("resp_stock", "Team1", src_id, responseContent);
 
             writer.write(mapper.writeValueAsString(response));
             writer.newLine();
             writer.flush();
-          } catch (Exception e) {
-            PrepayResponse request = mapper.readValue(reader, PrepayResponse.class);
-            String msg_type = request.msg_type();
-            String src_id = request.src_id();
-            String dst_id = request.dst_id();
-
-            if ((!dst_id.equals("Team1") && !dst_id.equals("0"))
-                || !msg_type.equals("req_prepay")) {
-              continue;
-            }
-
-            System.out.println("[SERVER] Received: " + request);
-
-            PrepayRequestContent msg_content =
-                mapper.readValue(reader, PrepayRequest.class).msg_content();
-
-            System.out.println("[SERVER] Received: " + request);
-
-            BeverageName trgBeverage = BeverageName.from(msg_content.item_code());
-            boolean haveStock = this.beverages.checkStock(trgBeverage, msg_content.item_num());
-            if (haveStock) {
-              this.beverages.reduce(trgBeverage, msg_content.item_num());
-              this.paymentMachine.storeBeverage(
-                  msg_content.cert_code(), new Beverage(trgBeverage, 0, msg_content.item_num()));
-            }
-
-            PrepayResponseContent responseContent =
-                new PrepayResponseContent(
-                    msg_content.item_code(), msg_content.item_num(), (haveStock) ? "T" : "F");
-
-            PrepayResponse response =
-                new PrepayResponse("resp_prepay", "Team1", src_id, responseContent);
-
-            writer.write(mapper.writeValueAsString(response));
-            writer.newLine();
-            writer.flush();
+          } catch (IOException ignored) {
           }
-        } catch (IOException ignored) {
         }
       }
     } catch (Exception e) {
