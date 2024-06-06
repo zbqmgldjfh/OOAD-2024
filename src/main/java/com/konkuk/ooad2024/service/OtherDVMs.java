@@ -3,10 +3,9 @@ package com.konkuk.ooad2024.service;
 import com.konkuk.ooad2024.domain.BeverageName;
 import com.konkuk.ooad2024.domain.OtherDVM;
 import com.konkuk.ooad2024.domain.Position;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class OtherDVMs {

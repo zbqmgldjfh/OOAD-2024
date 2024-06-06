@@ -4,11 +4,10 @@ import com.konkuk.ooad2024.domain.Beverage;
 import com.konkuk.ooad2024.domain.BeverageName;
 import com.konkuk.ooad2024.domain.OtherDVM;
 import com.konkuk.ooad2024.domain.Position;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import java.util.AbstractMap;
 import java.util.Map;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Metadata {

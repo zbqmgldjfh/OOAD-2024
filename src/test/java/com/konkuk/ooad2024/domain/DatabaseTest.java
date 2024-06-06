@@ -14,69 +14,66 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DatabaseTest {
 
-    Database db;
+  Database db;
 
-    @BeforeEach
-    void setUp() {
-        db = new Database();
-    }
+  private static Stream<Arguments> balanceCheckTestInput() {
+    return Stream.of(
+        Arguments.of(10000L, true), Arguments.of(0L, true), Arguments.of(10001L, false));
+  }
 
-    @Test
-    void 존재하지않는_계좌를_확인하는경우_예외가_발생한다() {
-        // given
-        db.addAccount(new Account(0L, 10000L));
-        Long invalidId = -1L;
+  @BeforeEach
+  void setUp() {
+    db = new Database();
+  }
 
-        // when
-        ThrowableAssert.ThrowingCallable actual = () -> db.balanceCheck(invalidId, 10000L);
+  @Test
+  void 존재하지않는_계좌를_확인하는경우_예외가_발생한다() {
+    // given
+    db.addAccount(new Account(0L, 10000L));
+    Long invalidId = -1L;
 
-        // then
-        assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
-    }
+    // when
+    ThrowableAssert.ThrowingCallable actual = () -> db.balanceCheck(invalidId, 10000L);
 
-    @ParameterizedTest
-    @MethodSource("balanceCheckTestInput")
-    void 계좌_차감_가능_확인_테스트(Long money, boolean expected) {
-        // given
-        db.addAccount(new Account(0L, 10000L));
+    // then
+    assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
+  }
 
-        // when
-        boolean result = db.balanceCheck(0L, money);
+  @ParameterizedTest
+  @MethodSource("balanceCheckTestInput")
+  void 계좌_차감_가능_확인_테스트(Long money, boolean expected) {
+    // given
+    db.addAccount(new Account(0L, 10000L));
 
-        // then
-        assertThat(result).isEqualTo(expected);
-    }
+    // when
+    boolean result = db.balanceCheck(0L, money);
 
-    @Test
-    void 계좌_차감_테스트() {
-        // given
-        Account account = Account.createNewAccount(10000L);
-        db.addAccount(account);
+    // then
+    assertThat(result).isEqualTo(expected);
+  }
 
-        // when
-        db.decreaseBalanceById(0L, 5000L);
+  @Test
+  void 계좌_차감_테스트() {
+    // given
+    Account account = Account.createNewAccount(10000L);
+    db.addAccount(account);
 
-        // then
-        assertThat(db.getBalanceById(0L)).isEqualTo(new Money(5000L));
-    }
+    // when
+    db.decreaseBalanceById(0L, 5000L);
 
-    @Test
-    void 계좌의_잔액보다_더_많은_금액을_차감하는_경우_예외가_발생한다() {
-        // given
-        db.addAccount(new Account(0L, 10000L));
+    // then
+    assertThat(db.getBalanceById(0L)).isEqualTo(new Money(5000L));
+  }
 
-        // when
-        ThrowableAssert.ThrowingCallable actual = () -> db.decreaseBalanceById(0L, 10001L);
+  @Test
+  void 계좌의_잔액보다_더_많은_금액을_차감하는_경우_예외가_발생한다() {
+    // given
+    db.addAccount(new Account(0L, 10000L));
 
-        // then
-        assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
-    }
+    // when
+    ThrowableAssert.ThrowingCallable actual = () -> db.decreaseBalanceById(0L, 10001L);
 
-    private static Stream<Arguments> balanceCheckTestInput() {
-        return Stream.of(
-                Arguments.of(10000L, true),
-                Arguments.of(0L, true),
-                Arguments.of(10001L, false)
-        );
-    }
+    // then
+    assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
+  }
 }

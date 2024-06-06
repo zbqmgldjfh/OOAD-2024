@@ -1,16 +1,11 @@
 package com.konkuk.ooad2024.service;
 
-import com.konkuk.ooad2024.domain.AuthenticationCode;
 import com.konkuk.ooad2024.domain.Beverage;
-import com.konkuk.ooad2024.domain.BeverageName;
 import com.konkuk.ooad2024.domain.Position;
 import com.konkuk.ooad2024.dto.PrePaymentResponseDto;
-import lombok.AllArgsConstructor;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @Service

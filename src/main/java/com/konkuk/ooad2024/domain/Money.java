@@ -1,9 +1,8 @@
 package com.konkuk.ooad2024.domain;
 
-import lombok.Getter;
-
 import java.text.DecimalFormat;
 import java.util.Objects;
+import lombok.Getter;
 
 @Getter
 public class Money implements Comparable<Money> {

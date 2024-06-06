@@ -1,11 +1,10 @@
 package com.konkuk.ooad2024.domain;
 
-import lombok.Synchronized;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Synchronized;
+import org.springframework.stereotype.Component;
 
 @Component
 public class Bank {

@@ -1,28 +1,24 @@
 package com.konkuk.ooad2024.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.konkuk.ooad2024.domain.*;
 import com.konkuk.ooad2024.dto.PrePaymentResponseDto;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 public class PrePaymentMachineTest {
 
   private PrePaymentMachine prePaymentMachine;
   private AuthenticationCodeGenerator anotherCodeGenerator;
-  @Mock
-  private AuthenticationCodeGenerator authenticationCodeGenerator;
-  @Mock
-  private OtherDVMs otherDVMs;
-  @Mock
-  private OtherDVM otherDVM;
+  @Mock private AuthenticationCodeGenerator authenticationCodeGenerator;
+  @Mock private OtherDVMs otherDVMs;
+  @Mock private OtherDVM otherDVM;
 
   @BeforeEach
   void setUp() {
@@ -41,7 +37,8 @@ public class PrePaymentMachineTest {
     // When
     when(authenticationCodeGenerator.createAuthenticationCode()).thenReturn(authCode);
     when(otherDVMs.findByPosition(any(Position.class))).thenReturn(otherDVM);
-    when(otherDVM.prepay(any(Beverage.class), any(AuthenticationCode.class), any(Position.class))).thenReturn(true);
+    when(otherDVM.prepay(any(Beverage.class), any(AuthenticationCode.class), any(Position.class)))
+        .thenReturn(true);
     PrePaymentResponseDto result = prePaymentMachine.prePayment(position, beverage);
 
     // Then

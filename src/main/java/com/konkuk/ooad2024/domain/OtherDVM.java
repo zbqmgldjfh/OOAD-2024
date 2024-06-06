@@ -1,12 +1,9 @@
 package com.konkuk.ooad2024.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NoArgsConstructor;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
-
 
 public class OtherDVM {
   private final Position position;

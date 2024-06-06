@@ -20,7 +20,7 @@ public class DVM {
   private final Position position;
   private final PaymentMachine paymentMachine;
   private final Bank bank;
-  private final String IS_NOT_PREPAY_POSSIBLE = "OtherDVM으로부터 선결제 불가능";
+  private static final String IS_NOT_PREPAY_POSSIBLE = "OtherDVM으로부터 선결제 불가능";
 
   @Autowired
   public DVM(
@@ -66,15 +66,15 @@ public class DVM {
     long amount = beverageQuantity * beveragePrice; // 총 결제할 금액 계산
     boolean haveBalance = bank.balanceCheck(accountId, amount);
 
-    //계좌에 잔액이 있다면 즉시 결제 (계좌에 금액 차감, 음료수 개수 차감)
-    //재고 확인 후 즉시 결제를 하는 것이라고 생각해, 잔액만 있다면 무조건 즉시 결제 성공
-    //계좌에 잔액이 없거나 User가 잘못된 계좌 정보를 입력했을 때는 클라이언트에게 false return
+    // 계좌에 잔액이 있다면 즉시 결제 (계좌에 금액 차감, 음료수 개수 차감)
+    // 재고 확인 후 즉시 결제를 하는 것이라고 생각해, 잔액만 있다면 무조건 즉시 결제 성공
+    // 계좌에 잔액이 없거나 User가 잘못된 계좌 정보를 입력했을 때는 클라이언트에게 false return
     if (haveBalance) {
       bank.requestPayment(accountId, amount);
       beverages.reduce(beverageName, beverageQuantity);
-      return new PaymentResponse(true,null);
-    }else {
-      return new PaymentResponse(false,null);
+      return new PaymentResponse(true, null);
+    } else {
+      return new PaymentResponse(false, null);
     }
   }
 
@@ -94,17 +94,17 @@ public class DVM {
       Position targetPosition =
           this.otherDVMs.findByPosition(new Position(request.x(), request.y())).getPosition();
       Beverage beverageDTO = new Beverage(beverageName, (int) beveragePrice, beverageQuantity);
-      PrePaymentResponseDto prePaymentResponseDto = paymentMachine.prePayment(targetPosition, beverageDTO);
+      PrePaymentResponseDto prePaymentResponseDto =
+          paymentMachine.prePayment(targetPosition, beverageDTO);
       boolean isPrepayPossible = prePaymentResponseDto.isPrepayPossible();
       String authenticationCode = prePaymentResponseDto.getAuthenticationCode();
       if (isPrepayPossible) {
-        //계좌에 잔액도 있고 Other DVM에서 선결제 여부도 true이면 결제 진행
+        // 계좌에 잔액도 있고 Other DVM에서 선결제 여부도 true이면 결제 진행
         bank.requestPayment(accountId, amount);
       } else {
         throw new Exception(IS_NOT_PREPAY_POSSIBLE);
       }
-      return new PaymentResponse(
-          isPrepayPossible, authenticationCode);
+      return new PaymentResponse(isPrepayPossible, authenticationCode);
     } else {
       return new PaymentResponse(false, null);
     }

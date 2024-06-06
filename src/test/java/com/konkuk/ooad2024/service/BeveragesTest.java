@@ -1,16 +1,15 @@
 package com.konkuk.ooad2024.service;
 
-import com.konkuk.ooad2024.domain.Beverage;
-import com.konkuk.ooad2024.domain.BeverageName;
-import org.assertj.core.api.ThrowableAssert;
-import org.junit.jupiter.api.Test;
-
-import java.util.AbstractMap;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.konkuk.ooad2024.domain.Beverage;
+import com.konkuk.ooad2024.domain.BeverageName;
+import java.util.AbstractMap;
+import java.util.Map;
+import org.assertj.core.api.ThrowableAssert;
+import org.junit.jupiter.api.Test;
 
 class BeveragesTest {
   @Test

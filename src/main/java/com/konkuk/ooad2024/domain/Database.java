@@ -1,8 +1,7 @@
 package com.konkuk.ooad2024.domain;
 
-import org.springframework.stereotype.Component;
-
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.stereotype.Component;
 
 @Component
 public class Database {
