@@ -155,17 +155,16 @@ public class DVM implements Runnable {
                 new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             BufferedWriter writer =
                 new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+          try {
+            StockCheckRequest request = mapper.readValue(reader, StockCheckRequest.class);
+            String msg_type = request.msg_type();
+            String src_id = request.src_id();
+            String dst_id = request.dst_id();
 
-          SocketMessage request = mapper.readValue(reader, SocketMessage.class);
-          String msg_type = request.msg_type();
-          String src_id = request.src_id();
-          String dst_id = request.dst_id();
+            if ((!dst_id.equals("Team1") && !dst_id.equals("0")) || !msg_type.equals("req_stock")) {
+              continue;
+            }
 
-          if (!dst_id.equals("Team1") && !dst_id.equals("0")) {
-            continue;
-          }
-
-          if (msg_type.equals("req_stock")) {
             StockCheckRequestContent msg_content =
                 mapper.readValue(reader, StockCheckRequest.class).msg_content();
 
@@ -188,7 +187,19 @@ public class DVM implements Runnable {
             writer.write(mapper.writeValueAsString(response));
             writer.newLine();
             writer.flush();
-          } else if (msg_type.equals("req_prepay")) {
+          } catch (Exception e) {
+            PrepayResponse request = mapper.readValue(reader, PrepayResponse.class);
+            String msg_type = request.msg_type();
+            String src_id = request.src_id();
+            String dst_id = request.dst_id();
+
+            if ((!dst_id.equals("Team1") && !dst_id.equals("0"))
+                || !msg_type.equals("req_prepay")) {
+              continue;
+            }
+
+            System.out.println("[SERVER] Received: " + request);
+
             PrepayRequestContent msg_content =
                 mapper.readValue(reader, PrepayRequest.class).msg_content();
 
