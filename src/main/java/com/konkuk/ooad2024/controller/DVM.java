@@ -38,21 +38,18 @@ public class DVM {
 
   @PostMapping("beverages")
   @ResponseBody
-  public void selectBeverage(@RequestBody BeverageRequest request) {
+  public BeverageResponse selectBeverage(@RequestBody BeverageRequest request) {
     BeverageName bn = BeverageName.from(request.beverageId());
     int quantity = request.quantity();
 
     boolean haveStock = this.beverages.checkStock(bn, quantity);
 
-    if (haveStock)
-      // XXX: response 명세 필요
-      // client와의 합의를 통해 즉시 결제가 가능함을 알리는 format을 정해야 합니다.
-      // NOTE: client와 통신을 REST라고 가정하고 작성됨
-      // WebSocket이라면 논의 내용이 달리질 수 있음
-      return;
+    if (haveStock) return new BeverageResponse(true, null, null);
 
-    // XXX: client와의 response 명세 필요
     Position nearest = this.otherDVMs.findNearestDVM(bn, quantity, this.position);
+    if (nearest == null) return new BeverageResponse(false, null, null);
+
+    return new BeverageResponse(true, nearest.getYaxis(), nearest.getYaxis());
   }
 
   @PostMapping("eager-payments")
