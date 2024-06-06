@@ -1,6 +1,10 @@
 package com.konkuk.ooad2024.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.konkuk.ooad2024.controller.StockCheckRequest;
+import com.konkuk.ooad2024.controller.StockCheckRequestContent;
+import com.konkuk.ooad2024.controller.StockCheckResponse;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
@@ -23,8 +27,31 @@ public class OtherDVM {
   }
 
   public boolean checkStock(BeverageName bn, int quantity) {
-    // TODO: using socket
-    return true;
+    ObjectMapper mapper = new ObjectMapper();
+
+    try (Socket socket = new Socket(this.ipAddr, this.port);
+        BufferedWriter writer =
+            new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        BufferedReader reader =
+            new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+      socket.setSoTimeout(1000);
+
+      StockCheckRequest request =
+          new StockCheckRequest(
+              "req_stock", "Team1", this.id, new StockCheckRequestContent(bn.getCode(), quantity));
+
+      String jsonMessage = mapper.writeValueAsString(request);
+      writer.write(jsonMessage);
+      writer.newLine();
+      writer.flush();
+
+      StockCheckResponse response = mapper.readValue(reader, StockCheckResponse.class);
+      System.out.println("[CLIENT] Received: " + response);
+
+      return response.msg_content().item_num() >= quantity;
+    } catch (Exception ignored) {
+    }
+    return false;
   }
 
   public boolean prepay(Beverage beverage, AuthenticationCode authCode, Position position)

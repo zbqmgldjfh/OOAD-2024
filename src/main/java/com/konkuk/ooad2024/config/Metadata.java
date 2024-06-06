@@ -1,7 +1,9 @@
 package com.konkuk.ooad2024.config;
 
+import com.konkuk.ooad2024.domain.Account;
 import com.konkuk.ooad2024.domain.Beverage;
 import com.konkuk.ooad2024.domain.BeverageName;
+import com.konkuk.ooad2024.domain.Database;
 import com.konkuk.ooad2024.domain.OtherDVM;
 import com.konkuk.ooad2024.domain.Position;
 import java.util.AbstractMap;
@@ -13,6 +15,17 @@ import org.springframework.context.annotation.Configuration;
 public class Metadata {
 
   @Bean
+  public Database myDatabase() {
+    Database db = new Database();
+    db.addAccount(Account.createNewAccount(1_000_000l));
+    db.addAccount(Account.createNewAccount(1_000_000l));
+    db.addAccount(Account.createNewAccount(1_000_000l));
+    db.addAccount(Account.createNewAccount(1_000_000l));
+    db.addAccount(Account.createNewAccount(1_000_000l));
+    return db;
+  }
+
+  @Bean
   public Position myPosition() {
     return new Position(4, 5);
   }
@@ -21,21 +34,21 @@ public class Metadata {
   public Map<String, OtherDVM> otherDVMsMap() {
     return Map.ofEntries(
         new AbstractMap.SimpleEntry<>(
-            "Team2", new OtherDVM(new Position(1, 1), "127.0.0.2", 8080, "Team2")),
+            "Team2", new OtherDVM(new Position(1, 1), "127.0.0.1", 9999, "Team2")),
         new AbstractMap.SimpleEntry<>(
-            "Team3", new OtherDVM(new Position(2, 1), "127.0.0.3", 8080, "Team3")),
+            "Team3", new OtherDVM(new Position(2, 1), "127.0.0.1", 9999, "Team3")),
         new AbstractMap.SimpleEntry<>(
-            "Team4", new OtherDVM(new Position(3, 1), "127.0.0.4", 8080, "Team4")),
+            "Team4", new OtherDVM(new Position(3, 1), "127.0.0.1", 9999, "Team4")),
         new AbstractMap.SimpleEntry<>(
-            "Team5", new OtherDVM(new Position(4, 1), "127.0.0.5", 8080, "Team5")),
+            "Team5", new OtherDVM(new Position(4, 1), "127.0.0.1", 9999, "Team5")),
         new AbstractMap.SimpleEntry<>(
-            "Team6", new OtherDVM(new Position(5, 1), "127.0.0.6", 8080, "Team6")),
+            "Team6", new OtherDVM(new Position(5, 1), "127.0.0.1", 9999, "Team6")),
         new AbstractMap.SimpleEntry<>(
-            "Team7", new OtherDVM(new Position(6, 1), "127.0.0.7", 8080, "Team7")),
+            "Team7", new OtherDVM(new Position(6, 1), "127.0.0.1", 9999, "Team7")),
         new AbstractMap.SimpleEntry<>(
-            "Team8", new OtherDVM(new Position(7, 1), "127.0.0.8", 8080, "Team8")),
+            "Team8", new OtherDVM(new Position(7, 1), "127.0.0.1", 9999, "Team8")),
         new AbstractMap.SimpleEntry<>(
-            "Team9", new OtherDVM(new Position(8, 1), "127.0.0.9", 8080, "Team9")));
+            "Team9", new OtherDVM(new Position(8, 1), "127.0.0.1", 9999, "Team9")));
   }
 
   @Bean
