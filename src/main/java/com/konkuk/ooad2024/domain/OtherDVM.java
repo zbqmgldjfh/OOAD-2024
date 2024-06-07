@@ -9,7 +9,12 @@ public class OtherDVM {
   private final Position position;
   private final String ipAddr;
   private final int port;
-  private final String id;
+  public final String id;
+
+  @Override
+  public String toString() {
+    return "OtherDVM{" + "ipAddr='" + ipAddr + '\'' + ", port=" + port + ", id='" + id + '\'' + '}';
+  }
 
   public OtherDVM(Position position, String ipAddr, int port, String id) {
     this.position = position;

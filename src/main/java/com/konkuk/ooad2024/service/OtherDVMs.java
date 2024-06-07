@@ -17,7 +17,9 @@ public class OtherDVMs {
   }
 
   public Position findNearestDVM(BeverageName bn, int quantity, Position myPosition) {
-    System.out.println("findNearestDVM: " + this.otherDVMs.values());
+    for (OtherDVM value : otherDVMs.values()) {
+      System.out.println("otherDVM = " + value);
+    }
 
     return this.otherDVMs.values().stream()
         .filter((otherDVM) -> otherDVM.checkStock(bn, quantity))
