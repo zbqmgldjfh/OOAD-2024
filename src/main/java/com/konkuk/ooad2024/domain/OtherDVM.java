@@ -35,7 +35,7 @@ public class OtherDVM {
       Map<String, Object> requestMap = new HashMap<>();
       requestMap.put("msg_type", "req_stock");
       requestMap.put("src_id", "Team1");
-      requestMap.put("dst_id", this.id);
+      requestMap.put("dst_id", "0");
       requestMap.put("msg_content", Map.of("item_code", bn.getCode(), "item_num", quantity));
 
       String jsonMessage = mapper.writeValueAsString(requestMap);

@@ -160,6 +160,7 @@ public class DVM implements Runnable {
                 new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
           try {
             String requestLine = reader.readLine();
+            System.out.println(requestLine);
             if (requestLine == null) continue;
 
             Map<String, Object> requestMap = mapper.readValue(requestLine, Map.class);
