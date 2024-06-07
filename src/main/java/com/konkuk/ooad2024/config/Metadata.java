@@ -39,16 +39,16 @@ public class Metadata {
         //            "Team3", new OtherDVM(new Position(66, 66), "43.200.64.96", 8080, "Team3")),
         //        new AbstractMap.SimpleEntry<>(
         //            "Team4", new OtherDVM(new Position(40, 40), "127.0.0.1", 9999, "Team4")),
-        //        new AbstractMap.SimpleEntry<>(
-        //            "Team5", new OtherDVM(new Position(50, 1), "127.0.0.1", 9999, "Team5")),
-        //        new AbstractMap.SimpleEntry<>(
-        //            "Team6", new OtherDVM(new Position(27, 80), "127.0.0.1", 9999, "Team6")),
-        //        new AbstractMap.SimpleEntry<>(
-        //            "Team7", new OtherDVM(new Position(0, 0), "127.0.0.1", 9999, "Team7")),
-        //        new AbstractMap.SimpleEntry<>(
-        //            "Team8", new OtherDVM(new Position(30, 30), "127.0.0.1", 9999, "Team8")),
         new AbstractMap.SimpleEntry<>(
-            "Team9", new OtherDVM(new Position(7, 17), "15.164.4.234", 8888, "Team9")));
+            "Team5", new OtherDVM(new Position(50, 1), "13.124.7.236", 11120, "Team5")));
+    //        new AbstractMap.SimpleEntry<>(
+    //            "Team6", new OtherDVM(new Position(27, 80), "127.0.0.1", 9999, "Team6")),
+    //        new AbstractMap.SimpleEntry<>(
+    //            "Team7", new OtherDVM(new Position(0, 0), "127.0.0.1", 9999, "Team7")),
+    //        new AbstractMap.SimpleEntry<>(
+    //            "Team8", new OtherDVM(new Position(30, 30), "127.0.0.1", 9999, "Team8")),
+    //        new AbstractMap.SimpleEntry<>(
+    //            "Team9", new OtherDVM(new Position(7, 17), "15.164.4.234", 8888, "Team9")));
   }
 
   @Bean
