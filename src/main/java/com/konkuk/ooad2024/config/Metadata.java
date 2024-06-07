@@ -54,19 +54,20 @@ public class Metadata {
   @Bean
   public Map<BeverageName, Beverage> myStock() {
     return Map.ofEntries(
-        new AbstractMap.SimpleEntry<>(BeverageName.COKE, new Beverage(BeverageName.COKE, 1_000, 5)),
         new AbstractMap.SimpleEntry<>(
-            BeverageName.CIDER, new Beverage(BeverageName.CIDER, 1_000, 0)),
+            BeverageName.COKE, new Beverage(BeverageName.COKE, 1_000, 99)),
         new AbstractMap.SimpleEntry<>(
-            BeverageName.GREEN_TEA, new Beverage(BeverageName.GREEN_TEA, 1_000, 0)),
+            BeverageName.CIDER, new Beverage(BeverageName.CIDER, 1_000, 99)),
         new AbstractMap.SimpleEntry<>(
-            BeverageName.BLACK_TEA, new Beverage(BeverageName.BLACK_TEA, 1_000, 0)),
+            BeverageName.GREEN_TEA, new Beverage(BeverageName.GREEN_TEA, 1_000, 99)),
         new AbstractMap.SimpleEntry<>(
-            BeverageName.MILK_TEA, new Beverage(BeverageName.MILK_TEA, 1_000, 0)),
+            BeverageName.BLACK_TEA, new Beverage(BeverageName.BLACK_TEA, 1_000, 99)),
         new AbstractMap.SimpleEntry<>(
-            BeverageName.SPARKLING_WATER, new Beverage(BeverageName.SPARKLING_WATER, 1_000, 0)),
+            BeverageName.MILK_TEA, new Beverage(BeverageName.MILK_TEA, 1_000, 99)),
         new AbstractMap.SimpleEntry<>(
-            BeverageName.BARLEY_TEA, new Beverage(BeverageName.BARLEY_TEA, 1_000, 0)),
+            BeverageName.SPARKLING_WATER, new Beverage(BeverageName.SPARKLING_WATER, 1_000, 99)),
+        new AbstractMap.SimpleEntry<>(
+            BeverageName.BARLEY_TEA, new Beverage(BeverageName.BARLEY_TEA, 1_000, 99)),
         new AbstractMap.SimpleEntry<>(
             BeverageName.CAN_COFFEE, new Beverage(BeverageName.CAN_COFFEE, 1_000, 0)),
         new AbstractMap.SimpleEntry<>(
