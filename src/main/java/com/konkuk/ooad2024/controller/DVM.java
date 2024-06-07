@@ -176,8 +176,11 @@ public class DVM implements Runnable {
             System.out.println("[SERVER] Received: " + requestMap);
 
             Map<String, Object> response = new HashMap<>();
+
             if (msg_type.equals("req_stock")) {
               String item_code = (String) msgContent.get("item_code");
+              if (item_code.length() == 1) item_code = "0" + item_code;
+
               int item_num = (int) msgContent.get("item_num");
 
               boolean haveStock = this.beverages.checkStock(BeverageName.from(item_code), item_num);
@@ -198,6 +201,8 @@ public class DVM implements Runnable {
                       this.position.getYaxis()));
             } else if (msg_type.equals("req_prepay")) {
               String item_code = (String) msgContent.get("item_code");
+              if (item_code.length() == 1) item_code = "0" + item_code;
+
               int item_num = (int) msgContent.get("item_num");
               String cert_code = (String) msgContent.get("cert_code");
 

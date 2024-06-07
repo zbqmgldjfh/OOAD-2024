@@ -48,7 +48,7 @@ public class Metadata {
         //        new AbstractMap.SimpleEntry<>(
         //            "Team8", new OtherDVM(new Position(30, 30), "127.0.0.1", 9999, "Team8")),
         new AbstractMap.SimpleEntry<>(
-            "Team9", new OtherDVM(new Position(7, 17), "1", 9999, "Team9")));
+            "Team9", new OtherDVM(new Position(7, 17), "15.164.4.234", 8888, "Team9")));
   }
 
   @Bean
