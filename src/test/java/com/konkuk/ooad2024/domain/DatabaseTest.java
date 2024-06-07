@@ -55,7 +55,7 @@ class DatabaseTest {
   @Test
   void 계좌_차감_테스트() {
     // given
-    Account account = Account.createNewAccount(10000L);
+    Account account = new Account(0L, 10000L);
     db.addAccount(account);
 
     // when

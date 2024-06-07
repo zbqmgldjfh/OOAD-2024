@@ -1,20 +1,30 @@
 package com.konkuk.ooad2024.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.konkuk.ooad2024.domain.*;
 import com.konkuk.ooad2024.dto.PrePaymentResponseDto;
 import com.konkuk.ooad2024.service.Beverages;
 import com.konkuk.ooad2024.service.OtherDVMs;
 import com.konkuk.ooad2024.service.PaymentMachine;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller(value = "/")
-public class DVM {
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+public class DVM implements Runnable {
   private final Beverages beverages;
   private final OtherDVMs otherDVMs;
   private final Position position;
@@ -38,21 +48,18 @@ public class DVM {
 
   @PostMapping("beverages")
   @ResponseBody
-  public void selectBeverage(@RequestBody BeverageRequest request) {
+  public BeverageResponse selectBeverage(@RequestBody BeverageRequest request) {
     BeverageName bn = BeverageName.from(request.beverageId());
     int quantity = request.quantity();
 
     boolean haveStock = this.beverages.checkStock(bn, quantity);
 
-    if (haveStock)
-      // XXX: response 명세 필요
-      // client와의 합의를 통해 즉시 결제가 가능함을 알리는 format을 정해야 합니다.
-      // NOTE: client와 통신을 REST라고 가정하고 작성됨
-      // WebSocket이라면 논의 내용이 달리질 수 있음
-      return;
+    if (haveStock) return new BeverageResponse(true, null, null);
 
-    // XXX: client와의 response 명세 필요
     Position nearest = this.otherDVMs.findNearestDVM(bn, quantity, this.position);
+    if (nearest == null) return new BeverageResponse(false, null, null);
+
+    return new BeverageResponse(true, nearest.getYaxis(), nearest.getYaxis());
   }
 
   @PostMapping("eager-payments")
@@ -64,6 +71,7 @@ public class DVM {
     BeverageName beverageName = BeverageName.from(request.beverageId()); // 음료 이름
     long beveragePrice = this.beverages.findPriceByName(beverageName);
     long amount = beverageQuantity * beveragePrice; // 총 결제할 금액 계산
+
     boolean haveBalance = bank.balanceCheck(accountId, amount);
 
     // 계좌에 잔액이 있다면 즉시 결제 (계좌에 금액 차감, 음료수 개수 차감)
@@ -87,6 +95,7 @@ public class DVM {
     BeverageName beverageName = BeverageName.from(request.beverageId()); // 음료 이름
     long beveragePrice = this.beverages.findPriceByName(beverageName);
     long amount = beverageQuantity * beveragePrice; // 총 결제할 금액 계산
+
     boolean haveBalance = bank.balanceCheck(accountId, amount);
 
     // 계좌 잔액이 충분하다면 PaymentMachine에게 선결제 요청 #1 (boolean return)
@@ -94,10 +103,13 @@ public class DVM {
       Position targetPosition =
           this.otherDVMs.findByPosition(new Position(request.x(), request.y())).getPosition();
       Beverage beverageDTO = new Beverage(beverageName, (int) beveragePrice, beverageQuantity);
+
       PrePaymentResponseDto prePaymentResponseDto =
           paymentMachine.prePayment(targetPosition, beverageDTO);
+
       boolean isPrepayPossible = prePaymentResponseDto.isPrepayPossible();
       String authenticationCode = prePaymentResponseDto.getAuthenticationCode();
+
       if (isPrepayPossible) {
         // 계좌에 잔액도 있고 Other DVM에서 선결제 여부도 true이면 결제 진행
         bank.requestPayment(accountId, amount);
@@ -127,10 +139,100 @@ public class DVM {
     return new PrePaidBeverageResponse(success, beverageId, quantity);
   }
 
-  // XXX: need HELP!
-  @MessageMapping("/")
-  @SendTo("/topic")
-  public boolean checkStock(@RequestBody BeverageRequest request) {
-    return this.beverages.checkStock(BeverageName.from(request.beverageId()), request.quantity());
+  @PostConstruct
+  public void init() {
+    Thread thread = new Thread(this);
+    thread.start();
+  }
+
+  @Override
+  public void run() {
+    ObjectMapper mapper = new ObjectMapper();
+
+    try (ServerSocket serverSocket = new ServerSocket(9999)) {
+      System.out.println("Socket server started on port 9999");
+
+      while (true) {
+        try (Socket clientSocket = serverSocket.accept();
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            BufferedWriter writer =
+                new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+          try {
+            String requestLine = reader.readLine();
+            if (requestLine == null) continue;
+
+            Map<String, Object> requestMap = mapper.readValue(requestLine, Map.class);
+            Map<String, Object> msgContent = (Map<String, Object>) requestMap.get("msg_content");
+            String msg_type = (String) requestMap.get("msg_type");
+            String src_id = (String) requestMap.get("src_id");
+            //            String dst_id = (String) requestMap.get("dst_id");
+
+            //            if ((!dst_id.equals("Team1") && !dst_id.equals("0"))) {
+            //              continue;
+            //            }
+
+            System.out.println("[SERVER] Received: " + requestMap);
+
+            Map<String, Object> response = new HashMap<>();
+            if (msg_type.equals("req_stock")) {
+              String item_code = (String) msgContent.get("item_code");
+              int item_num = (int) msgContent.get("item_num");
+
+              boolean haveStock = this.beverages.checkStock(BeverageName.from(item_code), item_num);
+
+              response.put("msg_type", "resp_stock");
+              response.put("src_id", "Team1");
+              response.put("dst_id", src_id);
+              response.put(
+                  "msg_content",
+                  Map.of(
+                      "item_code",
+                      item_code,
+                      "item_num",
+                      (haveStock) ? item_num : 0,
+                      "x",
+                      this.position.getXaxis(),
+                      "y",
+                      this.position.getYaxis()));
+            } else if (msg_type.equals("req_prepay")) {
+              String item_code = (String) msgContent.get("item_code");
+              int item_num = (int) msgContent.get("item_num");
+              String cert_code = (String) msgContent.get("cert_code");
+
+              BeverageName trgBeverage = BeverageName.from(item_code);
+              boolean haveStock = this.beverages.checkStock(trgBeverage, item_num);
+              if (haveStock) {
+                this.beverages.reduce(trgBeverage, item_num);
+                this.paymentMachine.storeBeverage(
+                    cert_code, new Beverage(trgBeverage, 0, item_num));
+              }
+
+              response.put("msg_type", "resp_prepay");
+              response.put("src_id", "Team1");
+              response.put("dst_id", src_id);
+              response.put(
+                  "msg_content",
+                  Map.of(
+                      "item_code",
+                      item_code,
+                      "item_num",
+                      item_num,
+                      "availability",
+                      (haveStock) ? "T" : "F"));
+            } else {
+              continue;
+            }
+
+            writer.write(mapper.writeValueAsString(response));
+            writer.newLine();
+            writer.flush();
+          } catch (IOException ignored) {
+          }
+        }
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }

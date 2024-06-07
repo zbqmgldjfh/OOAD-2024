@@ -29,8 +29,8 @@ public class OtherDVMs {
               if (dis1 < dis2) return -1;
               return 0;
             })
-        .toList()
-        .get(0);
+        .findFirst()
+        .orElse(null);
   }
 
   public OtherDVM findByPosition(Position position) {

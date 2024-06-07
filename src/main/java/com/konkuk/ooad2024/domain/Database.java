@@ -1,9 +1,7 @@
 package com.konkuk.ooad2024.domain;
 
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.stereotype.Component;
 
-@Component
 public class Database {
 
   private static final String NOT_EXIST_ACCOUNT = "존재하지 않는 계좌입니다.";
