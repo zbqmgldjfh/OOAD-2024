@@ -222,8 +222,11 @@ public class DVM implements Runnable {
                       "availability",
                       (haveStock) ? "T" : "F"));
             } else {
+              System.out.println("[SERVER] Invalid message type: " + msg_type);
               continue;
             }
+
+            System.out.println("[SERVER] Sent: " + response);
 
             writer.write(mapper.writeValueAsString(response));
             writer.newLine();
