@@ -35,8 +35,8 @@ public class Metadata {
     return Map.ofEntries(
         //        new AbstractMap.SimpleEntry<>(
         //            "Team2", new OtherDVM(new Position(12, 7), "127.0.0.1", 9999, "Team2")),
-        new AbstractMap.SimpleEntry<>(
-            "Team3", new OtherDVM(new Position(66, 66), "43.200.64.96", 8080, "Team3")),
+        //        new AbstractMap.SimpleEntry<>(
+        //            "Team3", new OtherDVM(new Position(66, 66), "43.200.64.96", 8080, "Team3")),
         //        new AbstractMap.SimpleEntry<>(
         //            "Team4", new OtherDVM(new Position(40, 40), "127.0.0.1", 9999, "Team4")),
         //        new AbstractMap.SimpleEntry<>(

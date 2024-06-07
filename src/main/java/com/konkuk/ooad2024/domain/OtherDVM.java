@@ -43,6 +43,8 @@ public class OtherDVM {
       writer.newLine();
       writer.flush();
 
+      System.out.println("[CLIENT] Sent: " + jsonMessage);
+
       String responseLine = reader.readLine();
       if (responseLine == null) return false;
 
@@ -89,8 +91,12 @@ public class OtherDVM {
       writer.newLine();
       writer.flush();
 
+      System.out.println("[CLIENT] Sent: " + jsonMessage);
+
       // 메시지 받기
       String responseLine = reader.readLine();
+      System.out.println("[CLIENT] Received: " + responseLine);
+
       if (responseLine == null) return false;
 
       Map<String, Object> responseMap = mapper.readValue(responseLine, Map.class);
