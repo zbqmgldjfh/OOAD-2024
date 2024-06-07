@@ -178,13 +178,18 @@ public class DVM implements Runnable {
             Map<String, Object> response = new HashMap<>();
 
             if (msg_type.equals("req_stock")) {
+              System.out.println("[SERVER] req_stock");
               String item_code = (String) msgContent.get("item_code");
               if (item_code.length() == 1) item_code = "0" + item_code;
 
+              System.out.println("[SERVER] item_code: " + item_code);
+
               int item_num = (int) msgContent.get("item_num");
 
+              System.out.println("[SERVER] check stock");
               boolean haveStock = this.beverages.checkStock(BeverageName.from(item_code), item_num);
 
+              System.out.println("[SERVER] stock: " + haveStock);
               response.put("msg_type", "resp_stock");
               response.put("src_id", "Team1");
               response.put("dst_id", src_id);
